@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "162401462729",
+    "project_id": "aplicativo-autonomos",
+    "storage_bucket": "aplicativo-autonomos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162401462729:android:2ecf65d4ec457c32ee6018",
+        "android_client_info": {
+          "package_name": "com.example.projeto_autonomos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7sT00uI5CHROJ6YsbUnC9A5wLt--o1JI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
