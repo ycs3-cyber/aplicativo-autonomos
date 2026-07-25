@@ -18,4 +18,50 @@ class Usuario {
     this.endereco,
     this.favoritos = const [],
   });
+
+  static Future<Usuario?> fromMap(Map<String, dynamic> data) async {
+    try {
+      final id = data['id'] as String? ?? '';
+      if (id.isEmpty) return null;
+
+      final nome = data['nome'] as String? ?? '';
+      final email = data['email'] as String? ?? '';
+      final telefone = data['telefone'] as String? ?? '';
+      final fotoPerfil = data['fotoPerfil'] as String? ?? '';
+
+      Endereco? endereco;
+      if (data['endereco'] != null && data['endereco'] is Map<String, dynamic>) {
+        endereco = await Endereco.fromMap(data['endereco'] as Map<String, dynamic>);
+      }
+
+      List<String> favoritos = [];
+      if (data['favoritos'] is List) {
+        favoritos = (data['favoritos'] as List).map((e) => e.toString()).toList();
+      }
+
+      return Usuario(
+        id: id,
+        nome: nome,
+        email: email,
+        telefone: telefone,
+        fotoPerfil: fotoPerfil,
+        endereco: endereco,
+        favoritos: favoritos,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nome': nome,
+      'email': email,
+      'telefone': telefone,
+      'fotoPerfil': fotoPerfil,
+      'endereco': endereco?.toMap(),
+      'favoritos': favoritos,
+    };
+  }
 }
