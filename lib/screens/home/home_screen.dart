@@ -1,50 +1,89 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_autonomos/routes/app_routes.dart';
+// removed erroneous self-import
 
 import '../../config/constants.dart';
+import '../../controllers/auth_controller.dart';
+import '../../widgets/custom_button.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final AuthController _authController = AuthController();
+
+  Future<void> _logout() async {
+  await _authController.logout();
+
+  if (!mounted) return;
+
+  Navigator.pushReplacementNamed(
+    context,
+    AppRoutes.login,
+  );
+}
+  @override
+  void dispose() {
+    _authController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Quebra Galho"),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(AppSizes.padding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.check_circle_outline,
-                size: 90,
-                color: Colors.green,
-              ),
-
-              SizedBox(height: 20),
-
-              Text(
-                "Login realizado com sucesso!",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              SizedBox(height: 12),
-
-              Text(
-                "Bem-vindo ao Quebra Galho.",
-                textAlign: TextAlign.center,
-              ),
-            ],
+    return AnimatedBuilder(
+      animation: _authController,
+      builder: (context, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Quebra Galho"),
+            centerTitle: true,
           ),
-        ),
-      ),
+
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSizes.padding),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(
+                    Icons.handyman_rounded,
+                    size: 90,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  Text(
+                    "Login realizado com sucesso!",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Text(
+                    "Bem-vindo ao Quebra Galho.\nSeu login foi realizado com sucesso.",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  CustomButton(
+                    isLoading: _authController.isLoading,
+                    onPressed: _logout,
+                    child: const Text("Sair"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -36,10 +36,10 @@ class AuthService {
     throw UnimplementedError();
   }
 
-  /// Logout
-  Future<void> signOut() async {
-    throw UnimplementedError();
-  }
+/// Logout
+Future<void> signOut() async {
+  await _auth.signOut();
+}
   
   String _getErrorMessage(String code) {
   switch (code) {

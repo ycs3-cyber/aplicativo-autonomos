@@ -16,6 +16,8 @@ class UsuarioRepository {
       throw Exception('Email or password cannot be empty');
     }
   }
+  
+  Future<void> logout() async {}
 }
 
 class AuthController extends ChangeNotifier {
@@ -58,4 +60,15 @@ class AuthController extends ChangeNotifier {
     senhaController.dispose();
     super.dispose();
   }
+
+
+  Future<void> logout() async {
+  try {
+    _setLoading(true);
+
+    await _usuarioRepository.logout();
+  } finally {
+    _setLoading(false);
+  }
+}
 }

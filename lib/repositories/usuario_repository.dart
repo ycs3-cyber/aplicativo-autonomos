@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_autonomos/repositories/usuario_repository.dart' as authController;
+import 'package:projeto_autonomos/routes/app_routes.dart';
 
 import '../../config/constants.dart';
 import '../../controllers/auth_controller.dart';
@@ -13,16 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final AuthController _authController = AuthController();
-
+  
   Future<void> _logout() async {
-    // Será implementado quando criarmos o logout.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Logout ainda não implementado."),
-      ),
-    );
-
-    /*
     await _authController.logout();
 
     if (!mounted) return;
@@ -31,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       AppRoutes.login,
     );
-    */
   }
 
   @override
