@@ -22,4 +22,4 @@ class UsuarioRepository {
 
 Future<void> logout() async {
   await authService.logout();
-}
+} 

@@ -23,4 +23,4 @@ class PerfilController {
 
 Future<void> logout() async {
   await repository.logout();
-}
+} 

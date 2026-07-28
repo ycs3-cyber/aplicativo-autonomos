@@ -9,4 +9,4 @@ Future<void> atualizarUsuario(Usuario usuario) async {
 
 }
 
-}
+} 
