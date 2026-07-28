@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatefulWidget {
-  const CustomTextField({
+  const CustomTextField.name({
     super.key,
     required this.controller,
     required this.label,
@@ -13,22 +13,48 @@ class CustomTextField extends StatefulWidget {
     this.enabled = true,
     this.readOnly = false,
     this.maxLines = 1,
+    this.autofocus = false,
+    this.focusNode,
+    this.textInputAction,
     this.onChanged,
+    this.onFieldSubmitted,
     this.onTap,
+    this.autofillHints,
   });
 
   final TextEditingController controller;
-  final String label;
-  final String? hint;
-  final IconData? prefixIcon;
-  final TextInputType keyboardType;
-  final String? Function(String?)? validator;
-  final bool obscureText;
-  final bool enabled;
-  final bool readOnly;
-  final int maxLines;
-  final Function(String)? onChanged;
-  final VoidCallback? onTap;
+
+final String label;
+
+final String? hint;
+
+final IconData? prefixIcon;
+
+final TextInputType keyboardType;
+
+final FormFieldValidator<String>? validator;
+
+final bool obscureText;
+
+final bool enabled;
+
+final bool readOnly;
+
+final int maxLines;
+
+final bool autofocus;
+
+final FocusNode? focusNode;
+
+final TextInputAction? textInputAction;
+
+final ValueChanged<String>? onChanged;
+
+final ValueChanged<String>? onFieldSubmitted;
+
+final VoidCallback? onTap;
+
+final Iterable<String>? autofillHints;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();

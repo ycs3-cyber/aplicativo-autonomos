@@ -3,17 +3,15 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
-    required this.text,
+    required this.child,
     required this.onPressed,
-    this.icon,
     this.isLoading = false,
     this.width = double.infinity,
-    this.height = 56, required Text child,
+    this.height = 56,
   });
 
-  final String text;
+  final Widget child;
   final VoidCallback? onPressed;
-  final IconData? icon;
   final bool isLoading;
   final double width;
   final double height;
@@ -33,16 +31,7 @@ class CustomButton extends StatelessWidget {
                   strokeWidth: 2,
                 ),
               )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon),
-                    const SizedBox(width: 8),
-                  ],
-                  Text(text),
-                ],
-              ),
+            : child,
       ),
     );
   }
