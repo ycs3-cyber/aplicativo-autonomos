@@ -1,51 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_autonomos/routes/app_routes.dart';
 
-import '../../config/app_routes.dart';
 import '../../config/constants.dart';
 import '../../controllers/auth_controller.dart';
+import '../../exceptions/auth_exception.dart';
+import '../../routes/app_routes.dart';
+import '../../utils/validators.dart';
+import '../../widgets/app_logo.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
-
-class Logo extends StatelessWidget {
-  final double size;
-  final String title;
-  final String subtitle;
-
-  const Logo({
-    super.key,
-    required this.size,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: size,
-          width: size,
-          child: const FlutterLogo(),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          subtitle,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
-    );
-  }
-}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -57,32 +19,54 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final AuthController _authController = AuthController();
+  final _emailController = TextEditingController();
+  final _senhaController = TextEditingController();
+
+  final _authController = AuthController();
 
   @override
   void dispose() {
+    _emailController.dispose();
+    _senhaController.dispose();
     _authController.dispose();
     super.dispose();
   }
 
   Future<void> _login() async {
+    FocusScope.of(context).unfocus();
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    final erro = await _authController.login();
+    try {
+      await _authController.login(
+        email: _emailController.text.trim(),
+        password: _senhaController.text,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    if (erro == null) {
       Navigator.pushReplacementNamed(
         context,
         AppRoutes.home,
       );
-    } else {
+    } on AuthException catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(erro),
+          content: Text(e.message),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Ocorreu um erro inesperado.",
+          ),
         ),
       );
     }
@@ -100,121 +84,105 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(AppSizes.padding),
                 child: Form(
                   key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Logo(
-                        size: 170,
-                        title: "Bem-vindo!",
-                        subtitle:
-                            "Encontre profissionais de confiança perto de você.",
-                      ),
-
-                      const SizedBox(height: 40),
-
-                      TextFormField(
-                        controller: _authController.emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        autofillHints: const [
-                          AutofillHints.email,
-                        ],
-                        decoration: const InputDecoration(
-                          labelText: "E-mail",
-                          hintText: "Digite seu e-mail",
-                          prefixIcon: Icon(Icons.email_outlined),
+                  child: AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const AppLogo(
+                          size: 280,
+                          title: "Bem-vindo!",
+                          subtitle:
+                              "Encontre profissionais de confiança perto de você.",
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Informe seu e-mail";
-                          }
 
-                          final regex = RegExp(
-                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                          );
+                        const SizedBox(height: 40),
 
-                          if (!regex.hasMatch(value)) {
-                            return "E-mail inválido";
-                          }
-
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      TextFormField(
-                        controller: _authController.senhaController,
-                        obscureText: true,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [
-                          AutofillHints.password,
-                        ],
-                        decoration: const InputDecoration(
-                          labelText: "Senha",
-                          hintText: "Digite sua senha",
-                          prefixIcon: Icon(Icons.lock_outline),
+                        CustomTextField(
+                          controller: _emailController,
+                          label: "E-mail",
+                          hint: "Digite seu e-mail",
+                          prefixIcon: Icons.email_outlined,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: Validators.email,
+                          textInputAction: TextInputAction.next,
+                          autofillHints: const [
+                            AutofillHints.email,
+                          ],
                         ),
-                        onFieldSubmitted: (_) => _login(),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Informe sua senha";
-                          }
 
-                          if (value.length < 6) {
-                            return "A senha deve possuir pelo menos 6 caracteres.";
-                          }
+                        const SizedBox(height: 20),
 
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.recuperarSenha,
-                            );
-                          },
-                          child: const Text("Esqueci minha senha"),
+                        CustomTextField(
+                          controller: _senhaController,
+                          label: "Senha",
+                          hint: "Digite sua senha",
+                          prefixIcon: Icons.lock_outline,
+                          obscureText: true,
+                          validator: Validators.password,
+                          textInputAction: TextInputAction.done,
+                          autofillHints: const [
+                            AutofillHints.password,
+                          ],
+                          onFieldSubmitted: (_) => _login(),
                         ),
-                      ),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 10),
 
-                      CustomButton(
-                        isLoading: _authController.isLoading,
-                        onPressed:
-                            _authController.isLoading ? null : _login,
-                        child: const Text(
-                          "Entrar",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Ainda não possui conta?"),
-
-                          TextButton(
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
                             onPressed: () {
                               Navigator.pushNamed(
                                 context,
-                                AppRoutes.cadastro,
+                                AppRoutes.recuperarSenha,
                               );
                             },
-                            child: const Text("Cadastre-se"),
+                            child: const Text(
+                              "Esqueci minha senha",
+                            ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        CustomButton(
+                          isLoading: _authController.isLoading,
+                          onPressed: _authController.isLoading
+                              ? null
+                              : _login,
+                          child: const Text(
+                            "Entrar",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Ainda não possui conta?",
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                // Quando criarmos a CadastroScreen:
+                                // Navigator.pushNamed(
+                                //   context,
+                                //   AppRoutes.cadastro,
+                                // );
+                              },
+                              child: const Text(
+                                "Cadastre-se",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

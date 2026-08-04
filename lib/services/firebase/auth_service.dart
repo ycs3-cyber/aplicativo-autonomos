@@ -1,71 +1,80 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../exceptions/auth_exception.dart';
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  /// Usuário autenticado
+  /// Usuário atualmente autenticado
   User? get currentUser => _auth.currentUser;
 
-  /// Login
+  /// LOGIN
   Future<UserCredential> signIn({
-  required String email,
-  required String password,
-}) async {
-  try {
-    return await _auth.signInWithEmailAndPassword(
-      email: email.trim(),
-      password: password,
-    );
-  } on FirebaseAuthException catch (e) {
-    throw Exception(_getErrorMessage(e.code));
-  }
-}
-
-  /// Cadastro
-  Future<UserCredential> signUp({
     required String email,
     required String password,
   }) async {
-    throw UnimplementedError();
+    try {
+      return await _auth.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_getErrorMessage(e));
+    }
   }
 
-  /// Recuperação de senha
-  Future<void> resetPassword({
+  /// LOGOUT
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_getErrorMessage(e));
+    }
+  }
+
+  /// RECUPERAÇÃO DE SENHA
+  Future<void> sendPasswordResetEmail({
     required String email,
   }) async {
-    throw UnimplementedError();
+    try {
+      await _auth.sendPasswordResetEmail(
+        email: email.trim(),
+      );
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_getErrorMessage(e));
+    }
   }
 
-/// Logout
-Future<void> signOut() async {
-  await _auth.signOut();
-}
-  
-  String _getErrorMessage(String code) {
-  switch (code) {
-    case 'user-not-found':
-      return 'Usuário não encontrado.';
+  /// Verifica se existe um usuário logado
+  bool get isLogged => currentUser != null;
 
-    case 'wrong-password':
-      return 'Senha incorreta.';
+  /// Traduz os erros do Firebase
+  String _getErrorMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'E-mail inválido.';
 
-    case 'invalid-email':
-      return 'E-mail inválido.';
+      case 'user-not-found':
+        return 'Nenhum usuário encontrado com este e-mail.';
 
-    case 'invalid-credential':
-      return 'E-mail ou senha inválidos.';
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'E-mail ou senha incorretos.';
 
-    case 'user-disabled':
-      return 'Usuário desativado.';
+      case 'too-many-requests':
+        return 'Muitas tentativas. Tente novamente mais tarde.';
 
-    case 'too-many-requests':
-      return 'Muitas tentativas. Tente novamente mais tarde.';
+      case 'network-request-failed':
+        return 'Sem conexão com a internet.';
 
-    case 'network-request-failed':
-      return 'Sem conexão com a internet.';
+      case 'user-disabled':
+        return 'Esta conta foi desativada.';
 
-    default:
-      return 'Erro ao realizar login.';
+      case 'operation-not-allowed':
+        return 'Operação não permitida.';
+
+      default:
+        return e.message ?? 'Ocorreu um erro inesperado.';
+    }
   }
-}
 }

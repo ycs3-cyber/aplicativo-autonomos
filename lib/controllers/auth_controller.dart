@@ -1,32 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// If the real UsuarioRepository is missing or import path is incorrect,
-// provide a minimal local implementation to satisfy references.
-// Remove this or adjust import when the actual repository is available.
-// keep original import commented for clarity
-// import 'package:projeto_autonomos/repositories/usuario_repository.dart';
-
-class UsuarioRepository {
-  Future<void> login({required String email, required String password}) async {
-    // Minimal placeholder: simulate network delay
-    await Future.delayed(const Duration(milliseconds: 200));
-    // In a real implementation, perform authentication and throw on failure.
-    if (email.isEmpty || password.isEmpty) {
-      throw Exception('Email or password cannot be empty');
-    }
-  }
-  
-  Future<void> logout() async {}
-}
+import '../exceptions/auth_exception.dart';
+import '../repositories/usuario_repository.dart';
 
 class AuthController extends ChangeNotifier {
-  AuthController();
-
   final UsuarioRepository _usuarioRepository = UsuarioRepository();
-
-  final emailController = TextEditingController();
-  final senhaController = TextEditingController();
 
   bool _isLoading = false;
 
@@ -37,38 +15,50 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> login() async {
+  /// LOGIN
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
     try {
       _setLoading(true);
 
       await _usuarioRepository.login(
-        email: emailController.text,
-        password: senhaController.text,
+        email: email,
+        password: password,
       );
-
-      return null;
-    } catch (e) {
-      return e.toString().replaceFirst('Exception: ', '');
+    } on AuthException {
+      rethrow;
     } finally {
       _setLoading(false);
     }
   }
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    senhaController.dispose();
-    super.dispose();
-  }
-
-
+  /// LOGOUT
   Future<void> logout() async {
-  try {
-    _setLoading(true);
+    try {
+      _setLoading(true);
 
-    await _usuarioRepository.logout();
-  } finally {
-    _setLoading(false);
+      await _usuarioRepository.logout();
+    } finally {
+      _setLoading(false);
+    }
   }
-}
+
+  /// RECUPERAÇÃO DE SENHA
+  Future<void> resetPassword({
+    required String email,
+  }) async {
+    try {
+      _setLoading(true);
+
+      await _usuarioRepository.resetPassword(
+        email: email,
+      );
+    } on AuthException {
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
 }

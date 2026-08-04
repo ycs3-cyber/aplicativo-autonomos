@@ -1,90 +1,32 @@
-import 'package:flutter/material.dart';
-import 'package:projeto_autonomos/repositories/usuario_repository.dart' as authController;
-import 'package:projeto_autonomos/routes/app_routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../config/constants.dart';
-import '../../controllers/auth_controller.dart';
-import '../../widgets/custom_button.dart';
+import '../services/firebase/auth_service.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class UsuarioRepository {
+  final AuthService _authService = AuthService();
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final AuthController _authController = AuthController();
-  
-  Future<void> _logout() async {
-    await _authController.logout();
-
-    if (!mounted) return;
-
-    Navigator.pushReplacementNamed(
-      context,
-      AppRoutes.login,
+  /// Login
+  Future<UserCredential> login({
+    required String email,
+    required String password,
+  }) {
+    return _authService.signIn(
+      email: email,
+      password: password,
     );
   }
 
-  @override
-  void dispose() {
-    _authController.dispose();
-    super.dispose();
+  /// Logout
+  Future<void> logout() {
+    return _authService.signOut();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _authController,
-      builder: (context, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Quebra Galho"),
-            centerTitle: true,
-          ),
-
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSizes.padding),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Icon(
-                    Icons.handyman_rounded,
-                    size: 90,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  Text(
-                    "Login realizado com sucesso!",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    "Bem-vindo ao Quebra Galho.\nSeu login foi realizado com sucesso.",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  CustomButton(
-                    isLoading: _authController.isLoading,
-                    onPressed: _logout,
-                    child: const Text("Sair"),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+  /// Recuperação de senha
+  Future<void> resetPassword({
+    required String email,
+  }) {
+    return _authService.sendPasswordResetEmail(
+      email: email,
     );
   }
 }

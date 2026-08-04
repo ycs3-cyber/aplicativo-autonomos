@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatefulWidget {
-  const CustomTextField.name({
+  const CustomTextField({
     super.key,
     required this.controller,
     required this.label,
@@ -23,38 +23,22 @@ class CustomTextField extends StatefulWidget {
   });
 
   final TextEditingController controller;
-
-final String label;
-
-final String? hint;
-
-final IconData? prefixIcon;
-
-final TextInputType keyboardType;
-
-final FormFieldValidator<String>? validator;
-
-final bool obscureText;
-
-final bool enabled;
-
-final bool readOnly;
-
-final int maxLines;
-
-final bool autofocus;
-
-final FocusNode? focusNode;
-
-final TextInputAction? textInputAction;
-
-final ValueChanged<String>? onChanged;
-
-final ValueChanged<String>? onFieldSubmitted;
-
-final VoidCallback? onTap;
-
-final Iterable<String>? autofillHints;
+  final String label;
+  final String? hint;
+  final IconData? prefixIcon;
+  final TextInputType keyboardType;
+  final FormFieldValidator<String>? validator;
+  final bool obscureText;
+  final bool enabled;
+  final bool readOnly;
+  final int maxLines;
+  final bool autofocus;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onFieldSubmitted;
+  final VoidCallback? onTap;
+  final Iterable<String>? autofillHints;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -79,8 +63,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
       enabled: widget.enabled,
       readOnly: widget.readOnly,
       maxLines: widget.obscureText ? 1 : widget.maxLines,
+
+      autofocus: widget.autofocus,
+      focusNode: widget.focusNode,
+      textInputAction: widget.textInputAction,
+      autofillHints: widget.autofillHints,
+
       onChanged: widget.onChanged,
       onTap: widget.onTap,
+      onFieldSubmitted: widget.onFieldSubmitted,
 
       decoration: InputDecoration(
         labelText: widget.label,

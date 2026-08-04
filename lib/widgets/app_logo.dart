@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class AppLogo extends StatelessWidget {
   const AppLogo({
     super.key,
@@ -24,11 +25,13 @@ class AppLogo extends StatelessWidget {
         ),
 
         if (title != null) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Text(
             title!,
-            style: Theme.of(context).textTheme.headlineSmall,
             textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ],
 
@@ -36,8 +39,8 @@ class AppLogo extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             subtitle!,
-            style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],
       ],
