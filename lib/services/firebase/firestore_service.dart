@@ -10,54 +10,29 @@ class FirestoreService {
 
 
   /// Retorna todos os profissionais
-  Future<List<Profissional>> buscarProfissionais() async {
-    final snapshot = await _db
-        .collection(_collection)
-        .get();
+ Future<List<Profissional>> buscarProfissionais() async {
+  try {
+    debugPrint("Firestore: acessando coleção $_collection");
 
-    debugPrint('FirestoreService: lendo coleção $_collection');
-    debugPrint('FirestoreService: documentos retornados ${snapshot.docs.length}');
+    final snapshot = await _db.collection(_collection).get();
+
+    debugPrint(
+      "Firestore: ${snapshot.docs.length} documento(s) encontrado(s)",
+    );
 
     for (final doc in snapshot.docs) {
-      debugPrint('FirestoreService: documento ${doc.id} -> ${doc.data()}');
+      debugPrint("Documento ${doc.id}: ${doc.data()}");
     }
 
     return snapshot.docs
-        .map(
-          (doc) => Profissional.fromMap(
-            doc.data(),
-            doc.id,
-          ),
-        )
+        .map((doc) => Profissional.fromMap(doc.data(), doc.id))
         .toList();
+  } catch (e, stackTrace) {
+    debugPrint("Erro ao buscar profissionais: $e");
+    debugPrintStack(stackTrace: stackTrace);
+    rethrow;
   }
-
-
-  /// Busca por categoria
-  Future<List<Profissional>> buscarProfissionaisCategoria(
-    String categoria,
-  ) async {
-
-    final snapshot = await _db
-        .collection(_collection)
-        .where(
-          'categoria',
-          isEqualTo: categoria,
-        )
-        .get();
-
-
-    return snapshot.docs
-        .map(
-          (doc) => Profissional.fromMap(
-            doc.data(),
-            doc.id,
-          ),
-        )
-        .toList();
-  }
-
-
+}
   /// Busca por nome
   Future<List<Profissional>> buscarProfissionaisNome(
     String nome,
@@ -119,4 +94,27 @@ class FirestoreService {
         )
         .toList();
   }
+
+  Future<List<Profissional>> buscarProfissionaisCategoria(String categoria) async {
+    final snapshot = await _db
+        .collection(_collection)
+        .get();
+
+    return snapshot.docs
+        .map(
+          (doc) => Profissional.fromMap(
+            doc.data(),
+            doc.id,
+          ),
+        )
+        .where(
+          (p) => p.categoria
+              .toLowerCase()
+              .contains(
+                categoria.toLowerCase(),
+              ),
+        )
+        .toList();
+  }
+
 }

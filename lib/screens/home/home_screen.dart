@@ -64,21 +64,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
           if (snapshot.hasError) {
             return Center(
-              child: Text(
-                "Erro: ${snapshot.error}",
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  "Erro ao carregar profissionais:\n${snapshot.error}",
+                  textAlign: TextAlign.center,
+                ),
               ),
             );
           }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          final profissionais = snapshot.data ?? [];
+
+          if (profissionais.isEmpty) {
             return const Center(
-              child: Text(
-                "Nenhum profissional encontrado.",
-              ),
+              child: Text("Nenhum profissional encontrado."),
             );
           }
-
-          final profissionais = snapshot.data!;
 
           return ListView.builder(
             padding: const EdgeInsets.all(12),
