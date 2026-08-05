@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_autonomos/routes/app_routes.dart';
-// removed erroneous self-import
 
-import '../../config/constants.dart';
 import '../../controllers/auth_controller.dart';
-import '../../widgets/custom_button.dart';
+import '../../controllers/home_controller.dart';
+import '../../models/profissional.dart';
+import '../../routes/app_routes.dart';
+import '../../widgets/home/profissional_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,76 +14,75 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final AuthController _authController = AuthController();
+  final HomeController controller = HomeController();
+  final AuthController authController = AuthController();
 
   Future<void> _logout() async {
-  await _authController.logout();
+    await authController.logout();
 
-  if (!mounted) return;
+    if (!mounted) return;
 
-  Navigator.pushReplacementNamed(
-    context,
-    AppRoutes.login,
-  );
-}
+    Navigator.pushReplacementNamed(
+      context,
+      AppRoutes.login,
+    );
+  }
+
   @override
   void dispose() {
-    _authController.dispose();
+    authController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _authController,
-      builder: (context, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Quebra Galho"),
-            centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Quebra Galho"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
           ),
+        ],
+      ),
+      body: FutureBuilder<List<Profissional>>(
+        future: controller.carregarProfissionais(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSizes.padding),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Icon(
-                    Icons.handyman_rounded,
-                    size: 90,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  Text(
-                    "Login realizado com sucesso!",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    "Bem-vindo ao Quebra Galho.\nSeu login foi realizado com sucesso.",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  CustomButton(
-                    isLoading: _authController.isLoading,
-                    onPressed: _logout,
-                    child: const Text("Sair"),
-                  ),
-                ],
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                "Erro: ${snapshot.error}",
               ),
-            ),
-          ),
-        );
-      },
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text(
+                "Nenhum profissional encontrado.",
+              ),
+            );
+          }
+
+          final profissionais = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: profissionais.length,
+            itemBuilder: (context, index) {
+              return ProfissionalCard(
+                profissional: profissionais[index],
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

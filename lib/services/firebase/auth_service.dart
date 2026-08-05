@@ -8,6 +8,9 @@ class AuthService {
   /// Usuário atualmente autenticado
   User? get currentUser => _auth.currentUser;
 
+  /// Verifica se existe um usuário logado
+  bool get isLogged => currentUser != null;
+
   /// LOGIN
   Future<UserCredential> signIn({
     required String email,
@@ -44,9 +47,6 @@ class AuthService {
       throw AuthException(_getErrorMessage(e));
     }
   }
-
-  /// Verifica se existe um usuário logado
-  bool get isLogged => currentUser != null;
 
   /// Traduz os erros do Firebase
   String _getErrorMessage(FirebaseAuthException e) {
