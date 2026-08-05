@@ -1,0 +1,47 @@
+[
+  {
+    "nome": "João da Silva",
+    "fotoPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+    "categoria": "Eletricista",
+    "descricao": "Especialista em instalações elétricas residenciais e comerciais.",
+    "cidade": "São Paulo",
+    "bairro": "Centro",
+    "telefone": "(11) 99999-8888",
+    "whatsapp": "(11) 99999-8888",
+    "avaliacao": 4.8,
+    "galeriaFotos": [
+      "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b",
+      "https://images.unsplash.com/photo-1581578731548-c64695cc6952"
+    ]
+  },
+  {
+    "nome": "Maria Oliveira",
+    "fotoPerfil": "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    "categoria": "Pintora",
+    "descricao": "Pintura residencial, comercial e acabamento refinado.",
+    "cidade": "Rio de Janeiro",
+    "bairro": "Copacabana",
+    "telefone": "(21) 98888-7777",
+    "whatsapp": "(21) 98888-7777",
+    "avaliacao": 4.9,
+    "galeriaFotos": [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858"
+    ]
+  },
+  {
+    "nome": "Carlos Mendes",
+    "fotoPerfil": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
+    "categoria": "Pedreiro",
+    "descricao": "Construção civil, reboco e acabamento com qualidade.",
+    "cidade": "Belo Horizonte",
+    "bairro": "Savassi",
+    "telefone": "(31) 97777-6666",
+    "whatsapp": "(31) 97777-6666",
+    "avaliacao": 4.7,
+    "galeriaFotos": [
+      "https://images.unsplash.com/photo-1504307651254-35680f356dfd",
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e"
+    ]
+  }
+]

@@ -28,7 +28,7 @@ class FavoritosRepository {
 
       if (doc.exists) {
         profissionais.add(
-          Profissional.fromMap(doc.data()!),
+          Profissional.fromMap(doc.id as Map<String, dynamic>, doc.data()! as String),
         );
       }
     }

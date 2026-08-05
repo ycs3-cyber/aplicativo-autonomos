@@ -16,6 +16,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final HomeController controller = HomeController();
   final AuthController authController = AuthController();
+  late final Future<List<Profissional>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = controller.carregarProfissionais();
+  }
 
   Future<void> _logout() async {
     await authController.logout();
@@ -47,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: FutureBuilder<List<Profissional>>(
-        future: controller.carregarProfissionais(),
+        future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -74,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final profissionais = snapshot.data!;
 
           return ListView.builder(
+            padding: const EdgeInsets.all(12),
             itemCount: profissionais.length,
             itemBuilder: (context, index) {
               return ProfissionalCard(

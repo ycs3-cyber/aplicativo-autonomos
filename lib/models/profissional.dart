@@ -10,28 +10,26 @@ class Profissional {
   final String bairro;
   final String telefone;
   final String whatsapp;
-  final double notaMedia;
-  final int quantidadeAvaliacoes;
+  final double avaliacao;
   final List<String> galeriaFotos;
 
   const Profissional({
     required this.id,
     required this.nome,
-    required this.fotoPerfil,
+    this.fotoPerfil = '',
     required this.categoria,
     required this.descricao,
     required this.cidade,
     required this.bairro,
     required this.telefone,
-    required this.whatsapp,
-    this.notaMedia = 0.0,
-    this.quantidadeAvaliacoes = 0,
+    this.whatsapp = '',
+    this.avaliacao = 0.0,
     this.galeriaFotos = const [],
   });
 
+
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'nome': nome,
       'fotoPerfil': fotoPerfil,
       'categoria': categoria,
@@ -40,15 +38,18 @@ class Profissional {
       'bairro': bairro,
       'telefone': telefone,
       'whatsapp': whatsapp,
-      'notaMedia': notaMedia,
-      'quantidadeAvaliacoes': quantidadeAvaliacoes,
+      'avaliacao': avaliacao,
       'galeriaFotos': galeriaFotos,
     };
   }
 
-  factory Profissional.fromMap(Map<String, dynamic> map) {
+
+  factory Profissional.fromMap(
+    Map<String, dynamic> map,
+    String id,
+  ) {
     return Profissional(
-      id: map['id'] ?? '',
+      id: id,
       nome: map['nome'] ?? '',
       fotoPerfil: map['fotoPerfil'] ?? '',
       categoria: map['categoria'] ?? '',
@@ -57,14 +58,19 @@ class Profissional {
       bairro: map['bairro'] ?? '',
       telefone: map['telefone'] ?? '',
       whatsapp: map['whatsapp'] ?? '',
-      notaMedia: (map['notaMedia'] ?? 0).toDouble(),
-      quantidadeAvaliacoes: map['quantidadeAvaliacoes'] ?? 0,
-      galeriaFotos: List<String>.from(map['galeriaFotos'] ?? []),
+      avaliacao: (map['avaliacao'] ?? 0).toDouble(),
+      galeriaFotos:
+          List<String>.from(map['galeriaFotos'] ?? []),
     );
   }
 
+
   String toJson() => json.encode(toMap());
 
+
   factory Profissional.fromJson(String source) =>
-      Profissional.fromMap(json.decode(source));
+      Profissional.fromMap(
+        json.decode(source),
+        '',
+      );
 }

@@ -31,7 +31,7 @@ class Usuario {
 
       Endereco? endereco;
       if (data['endereco'] != null && data['endereco'] is Map<String, dynamic>) {
-        endereco = await Endereco.fromMap(data['endereco'] as Map<String, dynamic>);
+        endereco = Endereco.fromMap(data['endereco'] as Map<String, dynamic>);
       }
 
       List<String> favoritos = [];
